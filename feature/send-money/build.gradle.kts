@@ -8,20 +8,26 @@
  * See https://github.com/openMF/mobile-wallet/blob/master/LICENSE.md
  */
 plugins {
-    alias(libs.plugins.mifospay.android.feature)
-    alias(libs.plugins.mifospay.android.library.compose)
+    alias(libs.plugins.mifospay.cmp.feature)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
     namespace = "org.mifospay.feature.send.money"
 }
 
-dependencies {
-    implementation(projects.core.data)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(compose.ui)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+        }
 
-    // we need it for country picker library
-    implementation(projects.libs.countryCodePicker)
-
-    // Google Bar code scanner
-    implementation(libs.google.play.services.code.scanner)
+        androidMain.dependencies {
+            implementation(libs.google.play.services.code.scanner)
+        }
+    }
 }

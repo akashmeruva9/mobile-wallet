@@ -1,0 +1,73 @@
+/*
+ * Copyright 2024 Mifos Initiative
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * See https://github.com/openMF/mobile-wallet/blob/master/LICENSE.md
+ */
+package org.mifospay.shared.navigation
+
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.navOptions
+import androidx.navigation.navigation
+import com.mifos.passcode.PASSCODE_SCREEN
+import com.mifos.passcode.passcodeRoute
+import com.mifos.passcode.utility.BioMetricUtil
+
+internal fun NavGraphBuilder.passcodeNavGraph(
+    navController: NavController,
+    bioMetricUtil: BioMetricUtil,
+    enableBiometric: Boolean,
+) {
+    navigation(
+        route = MifosNavGraph.PASSCODE_GRAPH,
+        startDestination = PASSCODE_SCREEN,
+    ) {
+        passcodeRoute(
+            onForgotButton = {
+                navController.popBackStack()
+                navController.navigateToMainGraph()
+            },
+            onSkipButton = {
+                navController.popBackStack()
+                navController.navigateToMainGraph()
+            },
+            onPasscodeConfirm = {
+                navController.popBackStack()
+                navController.navigateToMainGraph()
+            },
+            onPasscodeRejected = {
+                navController.popBackStack()
+                navController.navigateToMainGraph()
+            },
+            onBiometricAuthSucess = {
+                navController.popBackStack()
+                navController.navigate(MifosNavGraph.MAIN_GRAPH)
+            },
+            bioMetricUtil = bioMetricUtil,
+            enableBiometric = enableBiometric,
+        )
+    }
+}
+
+fun NavController.navigateToMainGraph() {
+    val options = navOptions {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destinations
+        // on the back stack as users select items
+        popUpTo(graph.findStartDestination().id) {
+            saveState = false
+        }
+        // Avoid multiple copies of the same destination when
+        // reselecting the same item
+        launchSingleTop = true
+        // Restore state when reselecting a previously selected item
+        restoreState = false
+    }
+
+    navigate(MifosNavGraph.MAIN_GRAPH, options)
+}

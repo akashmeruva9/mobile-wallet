@@ -7,23 +7,41 @@
  *
  * See https://github.com/openMF/mobile-wallet/blob/master/LICENSE.md
  */
-import com.android.build.gradle.internal.tasks.ApplicationIdWriterTask
 
 plugins {
-    alias(libs.plugins.mifospay.android.feature)
-    alias(libs.plugins.mifospay.android.library.compose)
+    alias(libs.plugins.mifospay.cmp.feature)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
     namespace = "org.mifospay.feature.profile"
-    buildFeatures {
-        buildConfig = true
+
+    defaultConfig {
+        consumerProguardFiles("consumer-rules.pro")
     }
 }
 
-dependencies {
-    implementation(projects.core.data)
-    implementation(projects.libs.countryCodePicker)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation(compose.ui)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+            implementation(libs.coil.kt.compose)
+            implementation(libs.filekit.core)
+            implementation(libs.filekit.compose)
+        }
+    }
+}
 
-    implementation(libs.coil.kt.compose)
+compose.desktop {
+    application {
+        nativeDistributions {
+            linux {
+                modules("jdk.security.auth")
+            }
+        }
+    }
 }
